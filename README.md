@@ -37,7 +37,8 @@ Jeden běh je ~45 HTTP dotazů a trvá ~20 sekund.
 
 ## Co přesně se hlídá
 
-Představení, kde **název filmu** obsahuje některý z řetězců `odyss` nebo `dune`
+Představení, kde **název filmu** obsahuje některý z řetězců `odyss`, `dune` nebo
+`duna`
 **a** **název sálu** obsahuje `imax`. Aktuálně tomu odpovídá jediné kino v ČR —
 **Praha Flora**, sál `IMAX VOLVO`.
 
@@ -50,7 +51,7 @@ Chování jde změnit proměnnými prostředí ve workflow:
 
 | Proměnná | Výchozí | Význam |
 | --- | --- | --- |
-| `FILM_PATTERNS` | `odyss,dune` | čárkou oddělené podřetězce názvů filmů (case-insensitive) |
+| `FILM_PATTERNS` | `odyss,dune,duna` | čárkou oddělené podřetězce názvů filmů (case-insensitive) |
 | `AUDITORIUM_PATTERN` | `imax` | podřetězec názvu sálu |
 | `HORIZON_DAYS` | `180` | jak daleko dopředu se ptát |
 | `HINT_ATTR` | `70-mm` | atribut pro levné dohledání kandidátských kin |
