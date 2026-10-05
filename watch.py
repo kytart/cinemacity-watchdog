@@ -26,7 +26,13 @@ UA = (
     "(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
 )
 
-FILM_PATTERN = os.environ.get("FILM_PATTERN", "duna").lower()
+FILM_PATTERNS = tuple(
+    pattern.strip().lower()
+    for pattern in os.environ.get(
+        "FILM_PATTERNS", os.environ.get("FILM_PATTERN", "duna")
+    ).split(",")
+    if pattern.strip()
+)
 AUDITORIUM_PATTERN = os.environ.get("AUDITORIUM_PATTERN", "imax").lower()
 HORIZON_DAYS = int(os.environ.get("HORIZON_DAYS", "180"))
 # Atribut, podle kterého API umí filtrovat kina — levná nápověda, kde hledat
@@ -122,7 +128,10 @@ def collect():
             films, events = day_cache.get((cid, day)) or fetch_day(cid, day)
             for e in events:
                 film = films.get(e["filmId"], {})
-                if FILM_PATTERN not in film.get("name", "").lower():
+                if not any(
+                    pattern in film.get("name", "").lower()
+                    for pattern in FILM_PATTERNS
+                ):
                     continue
                 if not is_target_hall(e):
                     continue
@@ -232,7 +241,7 @@ def render(new_events, gone_events):
     lines.append("")
     lines.append(
         f"<sub>Zkontrolováno {now():%d. %m. %Y %H:%M} · "
-        f"film ~ `{FILM_PATTERN}` · sál ~ `{AUDITORIUM_PATTERN}`</sub>"
+        f"filmy ~ `{', '.join(FILM_PATTERNS)}` · sál ~ `{AUDITORIUM_PATTERN}`</sub>"
     )
     return "\n".join(lines)
 
@@ -245,7 +254,7 @@ def group_by_cinema(events):
 
 
 def title_for(new_events):
-    film = new_events[0]["film"]
+    film = " + ".join(dict.fromkeys(e["film"] for e in new_events))
     days = sorted({e["datetime"][:10] for e in new_events})
     span = fmt_short(days[0])
     if len(days) > 1:
@@ -310,7 +319,7 @@ def main():
     if new_events:
         title = title_for(new_events)
     else:
-        film = gone[0]["film"]
+        film = " + ".join(dict.fromkeys(e["film"] for e in gone))
         title = f"🎬 {film} v IMAXu: zrušené termíny"
     with open(args.report, "w", encoding="utf-8") as fh:
         fh.write(body + "\n")
