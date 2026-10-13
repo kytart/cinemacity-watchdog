@@ -42,10 +42,10 @@ jobs:
 
       - name: Zkontrolovat rozpis
         id: watch
-        # Chceš hlídat jiné filmy nebo jiný typ sálu? Přepiš tyhle hodnoty
+        # Chceš hlídat jiný film nebo jiný typ sálu? Přepiš tyhle dvě hodnoty
         # a smaž state/seen.json (jinak se nový výběr porovná se starým stavem).
         env:
-          FILM_PATTERNS: odyss,dune,duna
+          FILM_PATTERN: duna
           AUDITORIUM_PATTERN: imax
         run: |
           python3 watch.py \
